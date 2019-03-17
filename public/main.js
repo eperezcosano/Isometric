@@ -7,10 +7,19 @@
 
   // Two Dimensional Array storing our isometric map layout. Each number represents a tile.
   var map = [
-    [1,0,0,0],
-    [1,0,0,1],
-    [0,0,1,1],
-    [1,1,1,1]
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
   ];
 
   var tileGraphics = [];
@@ -19,11 +28,13 @@
   var playerY = 2;
 
   function loadImg() {
-
     // Images to be loaded and used.
     // Tutorial Note: As water is loaded first it will be represented by a 0 on the map and land will be a 1.
-    var tileGraphicsToLoad = ["/images/water.png","/images/land.png", "/images/ralph.png"],
-    tileGraphicsLoaded = 0;
+    var tileGraphicsToLoad = [
+      "/images/water.png",
+      "/images/land.png",
+      "/images/ralph.png"];
+    var tileGraphicsLoaded = 0;
 
     for (var i = 0; i < tileGraphicsToLoad.length; i++) {
       tileGraphics[i] = new Image();
@@ -36,7 +47,6 @@
         }
       }
     }
-
   }
 
 
@@ -50,7 +60,7 @@
     var tileW = 52;
 
     // mapX and mapY are offsets to make sure we can position the map as we want.
-    var mapX = 76;
+    var mapX = 76*6;
     var mapY = 52;
 
     var drawTile;
