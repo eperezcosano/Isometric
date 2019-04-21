@@ -15,19 +15,35 @@ var map = [
   [1,1,1,1]
 ];
 
+var players = [];
+
 function onConnection(socket) {
 
-  socket.on('maprequest', function(data) {
-    
+  socket.on('coordsRequest', function() {
+    if (typeof players[socket.id] == 'undefined') {
+      players[socket.id] = [];
+      players[socket.id]['coordX'] = 1;
+      players[socket.id]['coordY'] = 1;
+    }
+    socket.emit('coordsResponse', [players[socket.id]['coordX'], players[socket.id]['coordY']]);
   });
 
-  socket.on('disconnecting', function() {
-    room = Object.keys(io.sockets.adapter.sids[socket.id])[1];
-    io.to(room).emit('playerDisconnect', room);
-    console.log('>> User leaving '+room);
+  socket.on('mapRequest', function() {
+    if (typeof players[socket.id] == 'undefined') {
+      players[socket.id] = [];
+    }
+    tmp_map = map;
+    tmp_map[1][2] = 2;
+    socket.emit('mapResponse', tmp_map);
+  });
+
+  socket.on('playerXDownRequest', function() {
+    //players[socket.id]['coordX']--;
+    socket.emit('mapResponse', map);
   });
 
   socket.on('disconnect', function(){
     console.log('>> User disconnected');
+    players[socket.id] = [];
   });
 }
