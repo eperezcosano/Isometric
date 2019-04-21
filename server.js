@@ -14,36 +14,64 @@ var map = [
   [0,0,1,1],
   [1,1,1,1]
 ];
-
 var players = [];
+
+function addPlayer(id) {
+  players[id] = [];
+  players[id]['coordX'] = 1;
+  players[id]['coordY'] = 1;
+}
+
+function mapPlayers() {
+
+  var tmp = [];
+
+  for (var i = 0; i < map.length; i++) {
+    tmp[i] = [];
+    for (var j = 0; j < map[i].length; j++) {
+      tmp[i][j] = map[i][j];
+    }
+  }
+
+  for (var id in players) {
+    tmp[players[id]['coordX']][players[id]['coordY']] = 2;
+  }
+
+  return tmp;
+}
 
 function onConnection(socket) {
 
-  socket.on('coordsRequest', function() {
-    if (typeof players[socket.id] == 'undefined') {
-      players[socket.id] = [];
-      players[socket.id]['coordX'] = 1;
-      players[socket.id]['coordY'] = 1;
-    }
-    socket.emit('coordsResponse', [players[socket.id]['coordX'], players[socket.id]['coordY']]);
-  });
-
   socket.on('mapRequest', function() {
+
     if (typeof players[socket.id] == 'undefined') {
-      players[socket.id] = [];
+      console.log(">> User connected");
+      addPlayer(socket.id);
     }
-    tmp_map = map;
-    tmp_map[1][2] = 2;
-    socket.emit('mapResponse', tmp_map);
+    io.emit('mapResponse', mapPlayers());
   });
 
-  socket.on('playerXDownRequest', function() {
-    //players[socket.id]['coordX']--;
-    socket.emit('mapResponse', map);
+  socket.on('moveRequest', function(key) {
+    switch(key) {
+      case 37:
+        players[socket.id]['coordX']--;
+        break;
+      case 39:
+        players[socket.id]['coordX']++;
+        break;
+      case 38:
+        players[socket.id]['coordY']--;
+        break;
+      case 40:
+        players[socket.id]['coordY']++;
+        break;
+    }
+    io.emit('mapResponse', mapPlayers());
   });
 
   socket.on('disconnect', function(){
     console.log('>> User disconnected');
-    players[socket.id] = [];
+    delete players[socket.id];
+    io.emit('mapResponse', mapPlayers());
   });
 }

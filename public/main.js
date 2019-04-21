@@ -7,13 +7,13 @@
 
   var tileGraphics = [];
 
-  // Set as your tile pixel sizes, alter if you are using larger tiles.
+  //Tile pixel sizes
   var tileH = 25;
   var tileW = 52;
 
   // mapX and mapY are offsets to make sure we can position the map as we want.
-  var mapX = 76*6;
-  var mapY = 52;
+  var mapX = 80;
+  var mapY = 10;
 
   function loadImg() {
     var tileGraphicsToLoad = [
@@ -36,19 +36,15 @@
   }
 
   function drawMap(map) {
-
-    var drawTile;
-
     // Clear the  canvas
-    ctx.clearRect(0, 0, 800, 500);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     for (var i = 0; i < map.length; i++) {
       for (var j = 0; j < map[i].length; j++) {
-        drawTile = map[i][j];
-        if (drawTile == 2) {
-          ctx.drawImage(tileGraphics[drawTile], (i - j) * tileH + mapX, (i + j) * tileH / 4 + mapY - drawTile);
+        if (map[i][j] == 2) {
+          ctx.drawImage(tileGraphics[map[i][j]], (i - j) * tileH + mapX, (i + j) * tileH / 2 + mapY - tileH);
         } else {
-          ctx.drawImage(tileGraphics[drawTile], (i - j) * tileH + mapX, (i + j) * tileH / 2 + mapY);
+          ctx.drawImage(tileGraphics[map[i][j]], (i - j) * tileH + mapX, (i + j) * tileH / 2 + mapY);
         }
       }
     }
@@ -59,42 +55,17 @@
     isometric.removeEventListener('load', init);
     loadImg();
     isometric.addEventListener("keyup", function(e) {
-      switch(e.keyCode) {
-        case 37:
-          socket.emit('playerXDownRequest');
-          //playerX--;
-        break;
-        case 39:
-          socket.emit('playerXUpRequest');
-          //playerX++;
-        break;
-        case 38:
-          socket.emit('playerYDownRequest');
-          //playerY--;
-        break;
-        case 40:
-          socket.emit('playerYUpRequest');
-          //playerY++;
-        break;
-      }
+      socket.emit('moveRequest', e.keyCode);
     });
   };
 
   // Add Event Listener to dectect when page has fully loaded.
   isometric.addEventListener('load', init, false);
 
-  socket.on('coordsResponse', function(data) {
-    console.log(">> Coords response: ");
-    console.log(data);
-    playerX = data[0];
-    playerY = data[1];
-  });
-
   socket.on('mapResponse', function(map) {
     console.log(">> Map response: ");
     console.log(map);
     drawMap(map);
   });
-
 
 })(this);
