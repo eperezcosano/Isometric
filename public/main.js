@@ -19,11 +19,20 @@
   var typing          = false;
   var lastTypingTime;
 
-  //Socket and canvas
+  //Socket
   var socket          = io();
+
+  //Canvas
   var canvas          = document.getElementById('canvas');
   var ctx             = canvas.getContext('2d');
   ctx.font            = "30px Arial";
+
+  //Map
+  var tileGraphics = [];
+  var tileH = 25;
+  var tileW = 52;
+  var mapX = 200;
+  var mapY = 50;
 
   const cleanInput = (input) => {
     var div = document.createElement('div');
@@ -229,33 +238,15 @@
     log('attempt to reconnect has failed');
   });
 
-  var tileGraphics = [];
-
-  //Tile pixel sizes
-  var tileH = 25;
-  var tileW = 52;
-
-  // mapX and mapY are offsets to make sure we can position the map as we want.
-  var mapX = 200;
-  var mapY = 50;
-
   function loadImg() {
     var tileGraphicsToLoad = [
       "/images/water.png",
       "/images/land.png",
       "/images/ralph.png"];
-    var tileGraphicsLoaded = 0;
 
     for (var i = 0; i < tileGraphicsToLoad.length; i++) {
       tileGraphics[i] = new Image();
       tileGraphics[i].src = tileGraphicsToLoad[i];
-      tileGraphics[i].onload = function() {
-        tileGraphicsLoaded++;
-        if (tileGraphicsLoaded === tileGraphicsToLoad.length) {
-            socket.emit('mapRequest');
-            console.log('>> Map Request');
-        }
-      }
     }
   }
 
@@ -276,10 +267,9 @@
   }
 
   function init() {
-    // Remove Event Listener and load images.
     isometric.removeEventListener('load', init);
     loadImg();
-    isometric.addEventListener("keyup", function(e) {
+    isometric.addEventListener("keydown", function(e) {
       socket.emit('moveRequest', e.keyCode);
     });
   };
@@ -288,6 +278,7 @@
   isometric.addEventListener('load', init, false);
 
   socket.on('mapResponse', function(map) {
+    if (!connected) return;
     console.log(">> Map response: ");
     console.log(map);
     drawMap(map);
