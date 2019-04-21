@@ -54,15 +54,19 @@ function onConnection(socket) {
   socket.on('moveRequest', function(key) {
     switch(key) {
       case 37:
+        if (players[socket.id]['coordX'] == 0) return;
         players[socket.id]['coordX']--;
         break;
       case 39:
+        if (players[socket.id]['coordX'] == map.length - 1) return;
         players[socket.id]['coordX']++;
         break;
       case 38:
+      if (players[socket.id]['coordY'] == 0) return;
         players[socket.id]['coordY']--;
         break;
       case 40:
+        if (players[socket.id]['coordY'] == map[players[socket.id]['coordX']].length - 1) return;
         players[socket.id]['coordY']++;
         break;
     }
