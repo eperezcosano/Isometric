@@ -17,7 +17,7 @@ var map = [
   [0,0,1,1,1,0,0,0],
   [1,1,1,1,1,0,0,1]
 ];
-var numplayers = 0;
+var numUsers = 0;
 var players = [];
 
 function mapPlayers() {
@@ -47,22 +47,22 @@ function onConnection(socket) {
     socket.username = username;
     socket.x = 0;
     socket.y = 0;
-    ++numplayers;
+    ++numUsers;
     players[socket.id] = [];
     players[socket.id]['username'] = socket.username;
     players[socket.id]['x'] = socket.x;
     players[socket.id]['y'] = socket.y;
     addedUser = true;
     socket.emit('login', {
-      numplayers: numplayers
+      numUsers: numUsers
     });
     socket.broadcast.emit('user joined', {
       username: socket.username,
-      numplayers: numplayers
+      numUsers: numUsers
     });
     io.emit('mapResponse', mapPlayers());
     console.log(">> " + socket.username + " connected");
-    console.log(">> " + numplayers + " players online");
+    console.log(">> " + numUsers + " players online");
   });
 
   socket.on('new message', (data) => {
@@ -89,15 +89,15 @@ function onConnection(socket) {
 
   socket.on('disconnect', () => {
     if (addedUser) {
-      --numplayers;
+      --numUsers;
       delete players[socket.id];
       socket.broadcast.emit('user left', {
         username: socket.username,
-        numplayers: numplayers
+        numUsers: numUsers
       });
       io.emit('mapResponse', mapPlayers());
       console.log(">> " + socket.username + " disconnected");
-      console.log(">> " + numplayers + " players left");
+      console.log(">> " + numUsers + " players left");
     }
   });
 

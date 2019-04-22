@@ -2,7 +2,7 @@
 (function(isometric) {
 
   //Chat
-  var TYPING_TIMER_LENGTH = 2000;
+  var TYPING_TIMER_LENGTH = 400;
   var COLORS = [
     '#e21400', '#91580f', '#f8a700', '#f78b00',
     '#58dc00', '#287b00', '#a8f07a', '#4ae8c4',
@@ -12,8 +12,9 @@
   var usernameInput   = document.getElementsByClassName("usernameInput")[0];
   var messages        = document.getElementsByClassName("messages")[0];
   var inputMessage    = document.getElementsByClassName("inputMessage")[0];
-  var loginPage       = document.getElementsByClassName("login page")[0];
-  var chatPage        = document.getElementsByClassName("chat page")[0];
+  var loginPage       = document.getElementsByClassName("login")[0];
+  var chatArea       = document.getElementsByClassName("chatArea")[0];
+  var playAreaPage    = document.getElementsByClassName("playArea")[0];
   var username;
   var connected       = false;
   var typing          = false;
@@ -66,7 +67,7 @@
       options.prepend = false;
     }
     if (options.fade) {
-      el.style.display = "-webkit-box";
+      el.style.display = "block";
     }
     if (options.prepend) {
       messages.prepend(el);
@@ -108,7 +109,8 @@
     username = cleanInput(usernameInput.value.trim());
     if (username) {
       loginPage.style.display = "none";
-      chatPage.style.display = "-webkit-box";
+      chatArea.style.display = "block";
+      playAreaPage.style.display = "block";
       socket.emit('add user', username);
     }
   }
